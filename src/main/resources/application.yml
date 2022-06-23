@@ -1,0 +1,2 @@
+address:
+  token-url: http://localhost:8080/api/user/create/confirm?token=
