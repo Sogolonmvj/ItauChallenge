@@ -139,12 +139,22 @@ public class UserService implements UserDetailsService {
         return criticDTO;
     }
 
-    public Optional<UserCritic> becomeModerator(String email, UserRole userRole) {
+    public Optional<UserDTO> becomeModerator(String email, UserRole userRole) {
         Optional<UserCritic> critic = userRepository.findByEmail(email);
 
         critic.ifPresent(userCritic -> userCritic.setUserRole(userRole));
 
-        return critic;
+        Optional<UserDTO> criticUpdatedDTO = Optional.of(new UserDTO());
+
+        if (critic.isPresent() && critic.get().getEnabled()) {
+            criticUpdatedDTO.get().setId(critic.get().getId());
+            criticUpdatedDTO.get().setFirstName(critic.get().getFirstName());
+            criticUpdatedDTO.get().setLastName(critic.get().getLastName());
+            criticUpdatedDTO.get().setEmail(critic.get().getEmail());
+            criticUpdatedDTO.get().setUserRole(critic.get().getUserRole());
+        }
+
+        return criticUpdatedDTO;
     }
 
     private String buildEmail(String name, String link) {

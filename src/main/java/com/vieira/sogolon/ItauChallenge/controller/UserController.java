@@ -1,8 +1,11 @@
 package com.vieira.sogolon.ItauChallenge.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.vieira.sogolon.ItauChallenge.dto.UserDTO;
 import com.vieira.sogolon.ItauChallenge.entities.UserCritic;
 import com.vieira.sogolon.ItauChallenge.enums.UserRole;
+import com.vieira.sogolon.ItauChallenge.parser.Json;
 import com.vieira.sogolon.ItauChallenge.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -44,13 +47,25 @@ public class UserController {
     @PatchMapping(path="/moderator/user/{email}")
     public ResponseEntity<?> becomeModerator(
             @PathVariable("email") String email,
-            @Validated @RequestBody UserRole userRole) { // change email to id
-        Optional<UserCritic> criticUpdated = userService.becomeModerator(email, userRole);
+            @Validated @RequestBody String userRole) { // change email to id
 
-        if (criticUpdated.isEmpty()) {
-            return ResponseEntity.badRequest().build(); // change to try/catch
+        try {
+            JsonNode node = Json.parse(userRole);
+
+            if (node.get("userRole").asText().equalsIgnoreCase(UserRole.MODERATOR.name())) {
+                Optional<UserDTO> criticUpdated = userService.becomeModerator(email, UserRole.MODERATOR);
+
+                if (criticUpdated.isEmpty()) {
+                    return ResponseEntity.badRequest().build(); // change to try/catch
+                }
+
+                return ResponseEntity.ok(criticUpdated);
+            }
+
+        } catch (JsonProcessingException exception) {
+            exception.printStackTrace();
         }
 
-        return ResponseEntity.ok(criticUpdated);
+        return ResponseEntity.badRequest().build();
     }
 }
