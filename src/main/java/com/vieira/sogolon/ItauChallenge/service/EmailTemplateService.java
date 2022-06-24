@@ -1,6 +1,11 @@
-package com.vieira.sogolon.ItauChallenge.template;
+package com.vieira.sogolon.ItauChallenge.service;
 
-public class EmailTemplate {
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@AllArgsConstructor
+public class EmailTemplateService {
 
     public String buildEmail(String name, String link) {
         return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
