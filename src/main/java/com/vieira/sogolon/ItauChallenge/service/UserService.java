@@ -2,6 +2,7 @@ package com.vieira.sogolon.ItauChallenge.service;
 
 import com.vieira.sogolon.ItauChallenge.dto.UserDTO;
 import com.vieira.sogolon.ItauChallenge.entities.UserCritic;
+import com.vieira.sogolon.ItauChallenge.enums.UserRole;
 import com.vieira.sogolon.ItauChallenge.repository.UserRepository;
 import com.vieira.sogolon.ItauChallenge.security.token.ConfirmationToken;
 import com.vieira.sogolon.ItauChallenge.security.token.service.ConfirmationTokenService;
@@ -16,9 +17,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+
+import static com.vieira.sogolon.ItauChallenge.enums.UserRole.MODERATOR;
 
 @Service
 @AllArgsConstructor
@@ -111,13 +112,41 @@ public class UserService implements UserDetailsService {
 
             UserDTO criticDTO = new UserDTO();
 
-//            if (critic.getEnabled()) {
-//                criticDTO.set
-//            }
+            if (critic.getEnabled()) {
+                criticDTO.setId(critic.getId());
+                criticDTO.setFirstName(critic.getFirstName());
+                criticDTO.setLastName(critic.getLastName());
+                criticDTO.setEmail(critic.getEmail());
+                criticDTO.setUserRole(critic.getUserRole());
+
+                criticDTOS.add(criticDTO);
+            }
 
         }
+        return criticDTOS;
+    }
 
-        return null;
+    public Optional<UserDTO> getUserCritic(String email) {
+        Optional<UserCritic> critic = userRepository.findByEmail(email);
+
+        Optional<UserDTO> criticDTO = Optional.of(new UserDTO());
+
+        if (critic.isPresent() && critic.get().getEnabled()) {
+            criticDTO.get().setId(critic.get().getId());
+            criticDTO.get().setFirstName(critic.get().getFirstName());
+            criticDTO.get().setLastName(critic.get().getLastName());
+            criticDTO.get().setEmail(critic.get().getEmail());
+            criticDTO.get().setUserRole(critic.get().getUserRole());
+        }
+        return criticDTO;
+    }
+
+    public Optional<UserCritic> becomeModerator(String email, UserRole userRole) {
+        Optional<UserCritic> critic = userRepository.findByEmail(email);
+
+        critic.ifPresent(userCritic -> userCritic.setUserRole(userRole));
+
+        return critic;
     }
 
     private String buildEmail(String name, String link) {

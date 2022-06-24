@@ -1,5 +1,5 @@
 package com.vieira.sogolon.ItauChallenge.entities;
 
-public class Address {
+public class Movies {
 
 }
