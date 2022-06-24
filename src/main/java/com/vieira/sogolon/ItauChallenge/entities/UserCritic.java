@@ -32,27 +32,23 @@ public class UserCritic implements UserDetails {
     private String lastName;
     private String email;
     private String password;
+    @Enumerated(EnumType.STRING)
     private UserRole userRole;
     private Boolean locked = false;
     private Boolean enabled = false;
     private Boolean authorized = false;
+    private Integer points;
 
     public UserCritic(String firstName,
                       String lastName,
                       String email,
                       String password,
-                      UserRole userRole,
-                      Boolean locked,
-                      Boolean enabled,
-                      Boolean authorized) {
+                      UserRole userRole) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.userRole = userRole;
-        this.locked = locked;
-        this.enabled = enabled;
-        this.authorized = authorized;
     }
 
     @Override

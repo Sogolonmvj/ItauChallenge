@@ -19,8 +19,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static com.vieira.sogolon.ItauChallenge.enums.UserRole.MODERATOR;
-
 @Service
 @AllArgsConstructor
 public class UserService implements UserDetailsService {

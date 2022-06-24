@@ -20,7 +20,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/users")
+    @GetMapping(path="/users")
     public ResponseEntity<List<UserDTO>> fetchAllCritics() {
         List<UserDTO> criticDTOS = userService.getAllCritics();
 

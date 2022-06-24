@@ -1,2 +1,6 @@
-address:
-  token-url: http://localhost:8080/api/user/create/confirm?token=
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+  port: 8080
+

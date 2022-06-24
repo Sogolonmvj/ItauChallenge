@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    password: 0wN3r
+    url: jdbc:postgresql://critics-system-postgres:5432/critic_registration
+    username: postgres
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+
+  mail:
+    host: maildev
+    port: 1025
+    username: critic
+    password: N3Wd1s0rD3r
+
+    properties:
+      mail:
+        smtp:
+          ssl:
+            trust: "*"
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+
+address:
+  token-url: http://localhost:8084/registration/confirmation?token=
