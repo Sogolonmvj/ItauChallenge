@@ -34,15 +34,10 @@ public class MoviesService {
 //    }
 
     public Optional<Movies> checkInDatabase(String title) {
-        
+
         String formattedString = title.substring(0, 1).toUpperCase() + title.substring(1);
 
-        return moviesRepository
-                .findByTitle(
-                        title.toUpperCase()
-                                .substring(1)
-                                .toLowerCase(Locale.ROOT)
-                );
+        return moviesRepository.findByTitle(formattedString);
     }
 
     public MoviesDTO getValuesFromDatabase(Movies movieInDatabase) {
