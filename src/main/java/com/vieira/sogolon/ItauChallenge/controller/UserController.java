@@ -115,6 +115,65 @@ public class UserController {
         return ResponseEntity.ok().body(newComment);
     }
 
+    @PostMapping("/critic/comment/like") // rate a movie
+    public ResponseEntity<?> likeComment(@RequestParam(value = "id", defaultValue = "") Long id) {
+        Comment comment = commentService.likeComment(id);
+//        Movies movie = moviesService.rateMovie(id, rating);
+//        , @RequestParam(value = "token", defaultValue = "") UUID token
+//        Optional<UserDTO> critic = userService.getUserCritic(token.toString());
+//        critic.ifPresent(user -> user.setPoints(user.getPoints()+1));
+        return ResponseEntity.ok().body(comment);
+    }
+
+    @PostMapping("/critic/comment/response/like") // rate a movie
+    public ResponseEntity<?> likeCommentResponse(@RequestParam(value = "id", defaultValue = "") Long id) {
+        CommentResponse commentResponse = commentService.likeCommentResponse(id);
+//        Movies movie = moviesService.rateMovie(id, rating);
+//        , @RequestParam(value = "token", defaultValue = "") UUID token
+//        Optional<UserDTO> critic = userService.getUserCritic(token.toString());
+//        critic.ifPresent(user -> user.setPoints(user.getPoints()+1));
+        return ResponseEntity.ok().body(commentResponse);
+    }
+
+    @PostMapping("/critic/comment/tag/like") // rate a movie
+    public ResponseEntity<?> likeCommentTag(@RequestParam(value = "id", defaultValue = "") Long id) {
+        CommentTag commentTag = commentService.likeCommentTag(id);
+//        Movies movie = moviesService.rateMovie(id, rating);
+//        , @RequestParam(value = "token", defaultValue = "") UUID token
+//        Optional<UserDTO> critic = userService.getUserCritic(token.toString());
+//        critic.ifPresent(user -> user.setPoints(user.getPoints()+1));
+        return ResponseEntity.ok().body(commentTag);
+    }
+
+    @PostMapping("/critic/comment/dislike") // rate a movie
+    public ResponseEntity<?> dislikeComment(@RequestParam(value = "id", defaultValue = "") Long id) {
+        Comment comment = commentService.dislikeComment(id);
+//        Movies movie = moviesService.rateMovie(id, rating);
+//        , @RequestParam(value = "token", defaultValue = "") UUID token
+//        Optional<UserDTO> critic = userService.getUserCritic(token.toString());
+//        critic.ifPresent(user -> user.setPoints(user.getPoints()+1));
+        return ResponseEntity.ok().body(comment);
+    }
+
+    @PostMapping("/critic/comment/response/dislike") // rate a movie
+    public ResponseEntity<?> dislikeCommentResponse(@RequestParam(value = "id", defaultValue = "") Long id) {
+        CommentResponse commentResponse = commentService.dislikeCommentResponse(id);
+//        Movies movie = moviesService.rateMovie(id, rating);
+//        , @RequestParam(value = "token", defaultValue = "") UUID token
+//        Optional<UserDTO> critic = userService.getUserCritic(token.toString());
+//        critic.ifPresent(user -> user.setPoints(user.getPoints()+1));
+        return ResponseEntity.ok().body(commentResponse);
+    }
+
+    @PostMapping("/critic/comment/tag/dislike") // rate a movie
+    public ResponseEntity<?> dislikeCommentTag(@RequestParam(value = "id", defaultValue = "") Long id) {
+        CommentTag commentTag = commentService.dislikeCommentTag(id);
+//        Movies movie = moviesService.rateMovie(id, rating);
+//        , @RequestParam(value = "token", defaultValue = "") UUID token
+//        Optional<UserDTO> critic = userService.getUserCritic(token.toString());
+//        critic.ifPresent(user -> user.setPoints(user.getPoints()+1));
+        return ResponseEntity.ok().body(commentTag);
+    }
 
 //
 //    @PostMapping("/titles")

@@ -1,5 +1,6 @@
 package com.vieira.sogolon.ItauChallenge.service;
 
+import antlr.StringUtils;
 import com.vieira.sogolon.ItauChallenge.dto.MoviesDTO;
 import com.vieira.sogolon.ItauChallenge.entities.Comment.Comment;
 import com.vieira.sogolon.ItauChallenge.entities.Comment.CommentResponse;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -22,8 +24,8 @@ public class MoviesService {
     private final static Double notRated = 0.0;
     private final static Integer notVoted = 0;
     private final static Integer noReactions = 0;
-    private static List<Comment> noComments = new ArrayList<>();
-    private static List<CommentResponse> noResponses = new ArrayList<>();
+    private final static List<Comment> noComments = new ArrayList<>();
+    private final static List<CommentResponse> noResponses = new ArrayList<>();
 //
 //    public MoviesDTO getMovie(Movies response) {
 //        moviesRepository.save(response);
@@ -31,23 +33,43 @@ public class MoviesService {
 //
 //    }
 
-    public MoviesDTO getValuesFromExternalAPI(Movies response) {
+    public Optional<Movies> checkInDatabase(String title) {
+        
+        String formattedString = title.substring(0, 1).toUpperCase() + title.substring(1);
 
+        return moviesRepository
+                .findByTitle(
+                        title.toUpperCase()
+                                .substring(1)
+                                .toLowerCase(Locale.ROOT)
+                );
+    }
+
+    public MoviesDTO getValuesFromDatabase(Movies movieInDatabase) {
+
+        return getMovieDTO(movieInDatabase);
+    }
+
+    private MoviesDTO getMovieDTO(Movies movie) {
         MoviesDTO moviesDTO = new MoviesDTO();
-        moviesDTO.setImdbID(response.getImdbID());
-        moviesDTO.setTitle(response.getTitle());
-        moviesDTO.setYear(response.getYear());
-        moviesDTO.setGenre(response.getGenre());
-        moviesDTO.setImdbRating(response.getImdbRating());
-        moviesDTO.setImdbVotes(response.getImdbVotes());
-        moviesDTO.setRuntime(response.getRuntime());
+        moviesDTO.setImdbID(movie.getImdbID());
+        moviesDTO.setTitle(movie.getTitle());
+        moviesDTO.setYear(movie.getYear());
+        moviesDTO.setGenre(movie.getGenre());
+        moviesDTO.setImdbRating(movie.getImdbRating());
+        moviesDTO.setImdbVotes(movie.getImdbVotes());
+        moviesDTO.setRuntime(movie.getRuntime());
+        moviesDTO.setRating(movie.getRating());
+        moviesDTO.setComments(movie.getComments());
+
+        return moviesDTO;
+    }
+
+    public MoviesDTO getValuesFromExternalAPI(Movies response) {
 
         saveMovieInDatabase(response);
 
-        moviesDTO.setRating(response.getRating());
-        moviesDTO.setComments(response.getComments());
-
-        return moviesDTO;
+        return getMovieDTO(response);
     }
 
     public void saveMovieInDatabase(Movies movie) {
@@ -62,7 +84,6 @@ public class MoviesService {
         Optional<Movies> movie = moviesRepository.findById(id);
 
         return movie.orElse(null);
-
     }
 
     public Movies rateMovie(Long id, Double rating) {

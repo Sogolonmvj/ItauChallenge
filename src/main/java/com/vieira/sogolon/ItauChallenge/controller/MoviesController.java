@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping(path="movies")
 @AllArgsConstructor
@@ -24,6 +26,12 @@ public class MoviesController {
 
     @GetMapping("/{title}")
     public MoviesDTO getMovies(@PathVariable("title") String title) {
+        Optional<Movies> movieInDatabase = moviesService.checkInDatabase(title);
+
+        if (movieInDatabase.isPresent()) {
+            return moviesService.getValuesFromDatabase(movieInDatabase.get());
+        }
+
         String key = env.getProperty("api.key");
         Movies response = moviesClient.getMovie(title, key, type);
         return moviesService.getValuesFromExternalAPI(response);
