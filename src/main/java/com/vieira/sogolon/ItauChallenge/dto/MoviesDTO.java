@@ -24,8 +24,7 @@ public class MoviesDTO {
     private String imdbID;
     private String imdbRating;
     private String imdbVotes;
+    private Double rating;
     private List<Comment> comments;
-    private int likes = 0;
-    private int dislikes = 0;
 
 }

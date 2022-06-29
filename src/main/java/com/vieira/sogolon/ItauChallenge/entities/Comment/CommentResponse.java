@@ -10,14 +10,12 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class CommentTag {
+public class CommentResponse {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String username;
     private String text;
-    @OneToOne(fetch = FetchType.LAZY)
-    private Comment taggedComment;
     private Integer likes;
     private Integer dislikes;
 }

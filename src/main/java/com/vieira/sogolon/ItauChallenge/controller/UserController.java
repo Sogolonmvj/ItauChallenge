@@ -3,11 +3,13 @@ package com.vieira.sogolon.ItauChallenge.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.vieira.sogolon.ItauChallenge.dto.UserDTO;
+import com.vieira.sogolon.ItauChallenge.entities.Comment.Comment;
+import com.vieira.sogolon.ItauChallenge.entities.Comment.CommentResponse;
+import com.vieira.sogolon.ItauChallenge.entities.Comment.CommentTag;
 import com.vieira.sogolon.ItauChallenge.entities.Movies;
-import com.vieira.sogolon.ItauChallenge.entities.Rate.Rate;
-import com.vieira.sogolon.ItauChallenge.entities.UserRequest.MovieRequest;
 import com.vieira.sogolon.ItauChallenge.enums.UserRole;
 import com.vieira.sogolon.ItauChallenge.parser.Json;
+import com.vieira.sogolon.ItauChallenge.service.CommentService;
 import com.vieira.sogolon.ItauChallenge.service.MoviesService;
 import com.vieira.sogolon.ItauChallenge.service.UserService;
 import lombok.AllArgsConstructor;
@@ -25,6 +27,7 @@ public class UserController {
 
     private final UserService userService;
     private final MoviesService moviesService;
+    private final CommentService commentService;
 
     @GetMapping(path="/users")
     public ResponseEntity<List<UserDTO>> fetchAllCritics() {
@@ -72,11 +75,46 @@ public class UserController {
         return ResponseEntity.badRequest().build();
     }
 
-    @PostMapping("/critic/rate")
-    public ResponseEntity<?> rateMovie(@RequestBody Rate rate) {
-        Movies movie = moviesService.rateMovie(rate);
+    @PostMapping("/critic/rate") // rate a movie
+    public ResponseEntity<?> rateMovie(@RequestParam(value = "id", defaultValue = "") Long id,
+                                       @RequestParam(value = "rating", defaultValue = "") Double rating) {
+        Movies movie = moviesService.rateMovie(id, rating);
+//        , @RequestParam(value = "token", defaultValue = "") UUID token
+//        Optional<UserDTO> critic = userService.getUserCritic(token.toString());
+//        critic.ifPresent(user -> user.setPoints(user.getPoints()+1));
         return ResponseEntity.ok().body(movie);
     }
+
+    @PostMapping("/critic/comment") // comment a movie
+    public ResponseEntity<?> commentMovie(@RequestParam(value = "id", defaultValue = "") Long id,
+                                       @RequestBody Comment comment) {
+        Movies movie = moviesService.commentMovie(id, comment);
+//        , @RequestParam(value = "token", defaultValue = "") UUID token
+//        Optional<UserDTO> critic = userService.getUserCritic(token.toString());
+//        critic.ifPresent(user -> user.setPoints(user.getPoints()+1));
+        return ResponseEntity.ok().body(movie);
+    }
+
+    @PostMapping("/critic/comment/response") // comment a movie
+    public ResponseEntity<?> commentResponse(@RequestParam(value = "id", defaultValue = "") Long id,
+                                          @RequestBody CommentResponse commentResponse) {
+        Comment comment = commentService.commentResponse(id, commentResponse);
+//        , @RequestParam(value = "token", defaultValue = "") UUID token
+//        Optional<UserDTO> critic = userService.getUserCritic(token.toString());
+//        critic.ifPresent(user -> user.setPoints(user.getPoints()+1));
+        return ResponseEntity.ok().body(comment);
+    }
+
+    @PostMapping("/critic/comment/tag") // comment a movie
+    public ResponseEntity<?> tagComment(@RequestParam(value = "id", defaultValue = "") Long id,
+                                             @RequestBody CommentTag commentTag) {
+        CommentTag newComment = commentService.tagComment(id, commentTag);
+//        , @RequestParam(value = "token", defaultValue = "") UUID token
+//        Optional<UserDTO> critic = userService.getUserCritic(token.toString());
+//        critic.ifPresent(user -> user.setPoints(user.getPoints()+1));
+        return ResponseEntity.ok().body(newComment);
+    }
+
 
 //
 //    @PostMapping("/titles")

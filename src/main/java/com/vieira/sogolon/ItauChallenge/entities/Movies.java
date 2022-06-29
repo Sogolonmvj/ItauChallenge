@@ -3,8 +3,6 @@ package com.vieira.sogolon.ItauChallenge.entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.vieira.sogolon.ItauChallenge.entities.Comment.Comment;
-import com.vieira.sogolon.ItauChallenge.entities.Reactions.BadReaction;
-import com.vieira.sogolon.ItauChallenge.entities.Reactions.GoodReaction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -37,12 +35,9 @@ public class Movies {
     private String imdbVotes;
     private Double rating;
     private Integer votes;
+
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Comment> comments;
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<GoodReaction> goodReactions;
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<BadReaction> badReactions;
 
     public Movies(String imdbID,
                   String title,
@@ -61,38 +56,6 @@ public class Movies {
         this.rating = 0.0;
         this.votes = 0;
         this.comments = new ArrayList<>();
-        this.goodReactions = new ArrayList<>();
-        this.badReactions = new ArrayList<>();
-    }
-
-    public List<Comment> getComments() {
-        if (comments == null) {
-            return null;
-        }
-
-        return comments;
-    }
-
-    public Integer getGoodReactions() {
-        if (goodReactions == null || badReactions == null) {
-            return null;
-        }
-
-        int result = goodReactions.size() - badReactions.size();
-
-        return Math.max(result, 0);
-
-    }
-
-    public Integer getBadReactions() {
-        if (goodReactions == null || badReactions == null) {
-            return null;
-        }
-
-        int result = badReactions.size() - goodReactions.size();
-
-        return Math.max(result, 0);
-
     }
 
 }
