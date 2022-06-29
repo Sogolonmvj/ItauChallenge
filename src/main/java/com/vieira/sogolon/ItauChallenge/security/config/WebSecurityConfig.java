@@ -34,6 +34,7 @@ public class WebSecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/registration/**").permitAll()
                 .antMatchers("/api/**").permitAll()
+                .antMatchers("/movies/**").permitAll()
                 .anyRequest()
                 .authenticated().and()
                 .formLogin();

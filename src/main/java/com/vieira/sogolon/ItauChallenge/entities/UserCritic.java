@@ -14,7 +14,7 @@ import java.util.Collections;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name="critic")
+@Table(name="critics")
 public class UserCritic implements UserDetails {
 
     @SequenceGenerator(name = "critic_sequence",
@@ -37,6 +37,7 @@ public class UserCritic implements UserDetails {
     private Boolean locked = false;
     private Boolean enabled = false;
     private Boolean authorized = false;
+    private Integer failedAttempts = 0;
     private Integer points = 0;
 
     public UserCritic(String firstName,

@@ -33,3 +33,6 @@ spring:
 
 address:
   token-url: http://localhost:8084/registration/confirmation?token=
+
+api:
+  key: e33942e4
