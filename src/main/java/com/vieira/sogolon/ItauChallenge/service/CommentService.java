@@ -19,6 +19,8 @@ public class CommentService {
     private CommentResponseRepository commentResponseRepository;
     private CommentTagRepository commentTagRepository;
     private final static Integer noReactions = 0;
+    private final static Boolean notRepeated = false;
+    private final static Boolean repeated = true;
 
     public Comment findCommentInDatabase(Long id) {
         Optional<Comment> comment = commentsRepository.findById(id);
@@ -42,6 +44,7 @@ public class CommentService {
     public void initiateCommentResponse(CommentResponse commentResponse) {
         commentResponse.setLikes(noReactions);
         commentResponse.setDislikes(noReactions);
+        commentResponse.setRepeated(notRepeated);
     }
 
     public Comment commentResponse(Long id, CommentResponse commentResponse) {
@@ -61,6 +64,7 @@ public class CommentService {
     public void initiateCommentTag(CommentTag commentTag) {
         commentTag.setLikes(noReactions);
         commentTag.setDislikes(noReactions);
+        commentTag.setRepeated(notRepeated);
     }
 
     public CommentTag tagComment(Long id, CommentTag commentTag) {
@@ -133,6 +137,45 @@ public class CommentService {
         commentTagRepository.save(commentTag);
 
         return commentTag;
+    }
+
+    public Comment deleteCommentResponse(Long commentId, Long commentResponseId) {
+        commentResponseRepository.deleteById(commentResponseId);
+        return commentsRepository.findById(commentId).orElse(null);
+    }
+
+    public void deleteCommentTag(Long commentTagId) {
+        commentTagRepository.deleteById(commentTagId);
+    }
+
+    public Comment markCommentAsRepeated(Long repeatedCommentId) {
+        Optional<Comment> comment = commentsRepository.findById(repeatedCommentId);
+        if (comment.isPresent()) {
+            comment.get().setRepeated(repeated);
+            commentsRepository.save(comment.get());
+            return comment.get();
+        }
+        return null;
+    }
+
+    public CommentResponse markCommentResponseAsRepeated(Long repeatedCommentResponseId) {
+        Optional<CommentResponse> commentResponse = commentResponseRepository.findById(repeatedCommentResponseId);
+        if (commentResponse.isPresent()) {
+            commentResponse.get().setRepeated(repeated);
+            commentResponseRepository.save(commentResponse.get());
+            return commentResponse.get();
+        }
+        return null;
+    }
+
+    public CommentTag markCommentTagAsRepeated(Long repeatedCommentTagId) {
+        Optional<CommentTag> commentTag = commentTagRepository.findById(repeatedCommentTagId);
+        if (commentTag.isPresent()) {
+            commentTag.get().setRepeated(repeated);
+            commentTagRepository.save(commentTag.get());
+            return commentTag.get();
+        }
+        return null;
     }
 
 }

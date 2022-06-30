@@ -22,12 +22,14 @@ public class Comment {
     private String text;
     private Integer likes;
     private Integer dislikes;
+    private Boolean repeated;
     @ManyToMany(fetch = FetchType.LAZY)
     private List<CommentResponse> responses;
 
     public Comment(String username, String text) {
         this.username = username;
         this.text = text;
+        this.repeated = false;
         this.responses = new ArrayList<>();
     }
 }

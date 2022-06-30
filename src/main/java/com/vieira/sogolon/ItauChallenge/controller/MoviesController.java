@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -23,6 +24,11 @@ public class MoviesController {
     private final MoviesService moviesService;
     private final Environment env;
     private final static String type = "r=json";
+
+    @GetMapping
+    public List<Movies> getAllMovies() {
+        return moviesService.findAllMoviesInDatabase();
+    }
 
     @GetMapping("/{title}")
     public MoviesDTO getMovies(@PathVariable("title") String title) {

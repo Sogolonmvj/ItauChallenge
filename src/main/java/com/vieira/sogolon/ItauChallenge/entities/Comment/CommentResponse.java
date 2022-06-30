@@ -16,6 +16,7 @@ public class CommentResponse {
     private Long id;
     private String username;
     private String text;
+    private Boolean repeated;
     private Integer likes;
     private Integer dislikes;
 }

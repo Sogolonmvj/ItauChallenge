@@ -175,6 +175,50 @@ public class UserController {
         return ResponseEntity.ok().body(commentTag);
     }
 
+    @DeleteMapping("/moderator/comment") // comment a movie
+    public ResponseEntity<?> deleteComment(@RequestParam(value = "id", defaultValue = "") Long movieId, @RequestParam(value = "comment_id", defaultValue = "") Long commentId) {
+        Movies movie = moviesService.deleteComment(movieId, commentId);
+//        , @RequestParam(value = "token", defaultValue = "") UUID token
+//        Optional<UserDTO> critic = userService.getUserCritic(token.toString());
+//        critic.ifPresent(user -> user.setPoints(user.getPoints()+1));
+        return ResponseEntity.ok().body(movie);
+    }
+
+    @DeleteMapping("/moderator/comment/response") // comment a movie
+    public ResponseEntity<?> deleteCommentResponse(@RequestParam(value = "id", defaultValue = "") Long commentId, @RequestParam(value = "comment_response_id", defaultValue = "") Long commentResponseId) {
+        Comment comment = commentService.deleteCommentResponse(commentId, commentResponseId);
+//        , @RequestParam(value = "token", defaultValue = "") UUID token
+//        Optional<UserDTO> critic = userService.getUserCritic(token.toString());
+//        critic.ifPresent(user -> user.setPoints(user.getPoints()+1));
+        return ResponseEntity.ok().body(comment);
+    }
+
+    @DeleteMapping("/moderator/comment/tag") // comment a movie
+    public ResponseEntity<?> deleteCommentTag(@RequestParam(value = "comment_tag_id", defaultValue = "") Long commentTagId) {
+        commentService.deleteCommentTag(commentTagId);
+//        , @RequestParam(value = "token", defaultValue = "") UUID token
+//        Optional<UserDTO> critic = userService.getUserCritic(token.toString());
+//        critic.ifPresent(user -> user.setPoints(user.getPoints()+1));
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/moderator/comment/repeated")
+    public ResponseEntity<?> markCommentAsRepeated(@RequestParam(value = "repeated_comment_id", defaultValue = "") Long repeatedCommentId) {
+        Comment comment = commentService.markCommentAsRepeated(repeatedCommentId);
+        return ResponseEntity.ok().body(comment);
+    }
+
+    @PostMapping("/moderator/comment/response/repeated")
+    public ResponseEntity<?> markCommentResponseAsRepeated(@RequestParam(value = "repeated_comment_response_id", defaultValue = "") Long repeatedCommentResponseId) {
+        CommentResponse commentResponse = commentService.markCommentResponseAsRepeated(repeatedCommentResponseId);
+        return ResponseEntity.ok().body(commentResponse);
+    }
+
+    @PostMapping("/moderator/comment/tag/repeated")
+    public ResponseEntity<?> markCommentTagAsRepeated(@RequestParam(value = "repeated_comment_tag_id", defaultValue = "") Long repeatedCommentTagId) {
+        CommentTag commentTag = commentService.markCommentTagAsRepeated(repeatedCommentTagId);
+        return ResponseEntity.ok().body(commentTag);
+    }
 //
 //    @PostMapping("/titles")
 //    ResponseEntity<Movies> seeMovie(@RequestBody MovieRequest request){

@@ -1,6 +1,5 @@
 package com.vieira.sogolon.ItauChallenge.service;
 
-import antlr.StringUtils;
 import com.vieira.sogolon.ItauChallenge.dto.MoviesDTO;
 import com.vieira.sogolon.ItauChallenge.entities.Comment.Comment;
 import com.vieira.sogolon.ItauChallenge.entities.Comment.CommentResponse;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -26,12 +24,7 @@ public class MoviesService {
     private final static Integer noReactions = 0;
     private final static List<Comment> noComments = new ArrayList<>();
     private final static List<CommentResponse> noResponses = new ArrayList<>();
-//
-//    public MoviesDTO getMovie(Movies response) {
-//        moviesRepository.save(response);
-//        Optional<Movies> movie = moviesRepository.findByTitle(response.getTitle());
-//
-//    }
+    private final static Boolean notRepeated = false;
 
     public Optional<Movies> checkInDatabase(String title) {
 
@@ -45,7 +38,7 @@ public class MoviesService {
         return getMovieDTO(movieInDatabase);
     }
 
-    private MoviesDTO getMovieDTO(Movies movie) {
+    public MoviesDTO getMovieDTO(Movies movie) {
         MoviesDTO moviesDTO = new MoviesDTO();
         moviesDTO.setImdbID(movie.getImdbID());
         moviesDTO.setTitle(movie.getTitle());
@@ -81,6 +74,10 @@ public class MoviesService {
         return movie.orElse(null);
     }
 
+    public List<Movies> findAllMoviesInDatabase() {
+        return moviesRepository.findAll();
+    }
+
     public Movies rateMovie(Long id, Double rating) {
         Movies movie = findMovieInDatabase(id);
 
@@ -105,6 +102,7 @@ public class MoviesService {
         comment.setResponses(noResponses);
         comment.setLikes(noReactions);
         comment.setDislikes(noReactions);
+        comment.setRepeated(notRepeated);
     }
 
     public Movies commentMovie(Long id, Comment comment) {
@@ -123,6 +121,11 @@ public class MoviesService {
 
     public void saveComment(Comment comment) {
         commentsRepository.save(comment);
+    }
+
+    public Movies deleteComment(Long commentId, Long movieId) {
+        commentsRepository.deleteById(commentId);
+        return moviesRepository.findById(movieId).orElse(null);
     }
 
 }

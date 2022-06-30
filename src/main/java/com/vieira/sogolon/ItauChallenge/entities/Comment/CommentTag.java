@@ -16,6 +16,7 @@ public class CommentTag {
     private Long id;
     private String username;
     private String text;
+    private Boolean repeated;
     @OneToOne(fetch = FetchType.LAZY)
     private Comment taggedComment;
     private Integer likes;
