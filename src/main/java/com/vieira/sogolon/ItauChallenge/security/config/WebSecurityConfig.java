@@ -1,44 +1,131 @@
 package com.vieira.sogolon.ItauChallenge.security.config;
 
-import com.vieira.sogolon.ItauChallenge.service.UserService;
-import lombok.AllArgsConstructor;
+import com.vieira.sogolon.ItauChallenge.repository.UserRepository;
+import com.vieira.sogolon.ItauChallenge.security.filter.CustomAuthenticationFilter;
+import com.vieira.sogolon.ItauChallenge.security.filter.CustomAuthorizationFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import static org.springframework.http.HttpMethod.*;
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
-@AllArgsConstructor
+@RequiredArgsConstructor
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    private final UserService userService;
+    private final UserRepository userRepository;
+    private final AuthenticationConfiguration authenticationConfiguration;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authenticationConfiguration
-    ) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http)
-            throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(userRepository, authenticationManager(authenticationConfiguration));
+        customAuthenticationFilter.setFilterProcessesUrl("/api/login");
+
         http
-                .csrf().disable()
+                .csrf().disable();
+        http
+                .sessionManagement()
+                .sessionCreationPolicy(STATELESS);
+        http
                 .authorizeRequests()
-                .antMatchers("/registration/**").permitAll()
-                .antMatchers("/api/**").permitAll()
-                .antMatchers("/movies/**").permitAll()
+                .antMatchers("/api/login/**", "/api/token/refresh/**", "/registration/**")
+                .permitAll();
+        http
+                .authorizeRequests()
+                .antMatchers(GET,  "/movies/**")
+                .hasAnyAuthority("READER", "BASIC", "ADVANCED", "MODERATOR");
+        http
+                .authorizeRequests()
+                .antMatchers(POST,  "/api/critic/rate")
+                .hasAnyAuthority("READER", "BASIC", "ADVANCED", "MODERATOR");
+        http
+                .authorizeRequests()
+                .antMatchers(POST, "/api/critic/comment")
+                .hasAnyAuthority("BASIC", "ADVANCED", "MODERATOR");
+        http
+                .authorizeRequests()
+                .antMatchers(POST, "/api/critic/comment/response")
+                .hasAnyAuthority("BASIC", "ADVANCED", "MODERATOR");
+        http
+                .authorizeRequests()
+                .antMatchers(POST, "/api/critic/comment/tag")
+                .hasAnyAuthority("ADVANCED", "MODERATOR");
+        http
+                .authorizeRequests()
+                .antMatchers(POST, "/api/critic/comment/like")
+                .hasAnyAuthority("ADVANCED", "MODERATOR");
+        http
+                .authorizeRequests()
+                .antMatchers(POST, "/api/critic/comment/dislike")
+                .hasAnyAuthority("ADVANCED", "MODERATOR");
+        http
+                .authorizeRequests()
+                .antMatchers(POST, "/api/critic/comment/response/like")
+                .hasAnyAuthority("ADVANCED", "MODERATOR");
+        http
+                .authorizeRequests()
+                .antMatchers(POST, "/api/critic/comment/response/dislike")
+                .hasAnyAuthority("ADVANCED", "MODERATOR");
+        http
+                .authorizeRequests()
+                .antMatchers(DELETE, "/api/moderator/comment")
+                .hasAnyAuthority("MODERATOR");
+        http
+                .authorizeRequests()
+                .antMatchers(DELETE, "/api/moderator/comment/response")
+                .hasAnyAuthority("MODERATOR");
+        http
+                .authorizeRequests()
+                .antMatchers(DELETE, "/api/moderator/comment/tag")
+                .hasAnyAuthority("MODERATOR");
+        http
+                .authorizeRequests()
+                .antMatchers(POST, "/api/moderator/comment/repeated")
+                .hasAnyAuthority("MODERATOR");
+        http
+                .authorizeRequests()
+                .antMatchers(POST, "/api/moderator/comment/response/repeated")
+                .hasAnyAuthority("MODERATOR");
+        http
+                .authorizeRequests()
                 .anyRequest()
-                .authenticated().and()
-                .formLogin();
+                .authenticated();
+        http
+                .addFilter(customAuthenticationFilter);
+        http
+                .addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedMethods("*");
+            }
+        };
     }
 
 }

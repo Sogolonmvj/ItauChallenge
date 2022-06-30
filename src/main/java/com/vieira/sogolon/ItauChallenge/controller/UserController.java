@@ -11,12 +11,15 @@ import com.vieira.sogolon.ItauChallenge.enums.UserRole;
 import com.vieira.sogolon.ItauChallenge.parser.Json;
 import com.vieira.sogolon.ItauChallenge.service.CommentService;
 import com.vieira.sogolon.ItauChallenge.service.MoviesService;
+import com.vieira.sogolon.ItauChallenge.service.TokenService;
 import com.vieira.sogolon.ItauChallenge.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +31,7 @@ public class UserController {
     private final UserService userService;
     private final MoviesService moviesService;
     private final CommentService commentService;
+    private final TokenService tokenService;
 
     @GetMapping(path="/users")
     public ResponseEntity<List<UserDTO>> fetchAllCritics() {
@@ -48,6 +52,11 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(criticDTO);
+    }
+
+    @GetMapping("/token/refresh")
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        tokenService.getRefreshToken(request, response);
     }
 
     @PatchMapping(path="/moderator/user/{email}")

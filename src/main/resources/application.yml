@@ -4,3 +4,5 @@ server:
     include-binding-errors: always
 #  port: 8080
 
+key:
+  secret: "secret"

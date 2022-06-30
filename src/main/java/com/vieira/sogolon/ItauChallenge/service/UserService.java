@@ -9,18 +9,24 @@ import com.vieira.sogolon.ItauChallenge.security.token.service.ConfirmationToken
 import com.vieira.sogolon.ItauChallenge.sender.EmailSender;
 import lombok.AllArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
 @AllArgsConstructor
+@Transactional
+@Slf4j
 public class UserService implements UserDetailsService {
 
     private final static String USER_NOT_FOUND_MESSAGE = "Usuário %s não encontrado.";
@@ -31,12 +37,19 @@ public class UserService implements UserDetailsService {
     private final Environment env;
     private final EmailTemplateService emailTemplateService;
 
-    @Override
     public UserDetails loadUserByUsername(String email)
             throws UsernameNotFoundException {
-        return userRepository.findByEmail(email).orElseThrow(() ->
-                new UsernameNotFoundException(
-                        String.format(USER_NOT_FOUND_MESSAGE, email)));
+        Optional<UserCritic> critic = userRepository.findByEmail(email);
+
+        if (critic.isPresent()) {
+            log.info("User found in the database: {}", email);
+            Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+            authorities.add(new SimpleGrantedAuthority(critic.get().getUserRole().toString()));
+            return new User(critic.get().getUsername(), critic.get().getPassword(), authorities);
+        }
+
+        log.error("User not found in the database!");
+        throw new UsernameNotFoundException("User not found in the database!");
     }
 
     public String signUpUser(UserCritic userCritic) {
@@ -129,6 +142,12 @@ public class UserService implements UserDetailsService {
         Optional<UserCritic> critic = userRepository.findByEmail(email);
 
         return getUserDTO(critic);
+    }
+
+    public UserCritic findUserCritic(String email) {
+        Optional<UserCritic> critic = userRepository.findByEmail(email);
+
+        return critic.orElse(null);
     }
 
     public Optional<UserDTO> becomeModerator(String email, UserRole userRole) {
