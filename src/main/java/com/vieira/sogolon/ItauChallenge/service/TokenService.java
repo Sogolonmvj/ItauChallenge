@@ -28,19 +28,25 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequiredArgsConstructor
 public class TokenService {
 
+    private final static String TOKEN_STARTER = "Bearer ";
+    private final static int TOKEN_TIME = 10 * 60 * 1000;
+    private final static String PROBLEM_MESSAGE = "A problem has occurred!";
+    private final static String MISSING_REFRESH_TOKEN_MESSAGE = "Refresh token is missing!";
+    private final static String ERROR_MESSAGE = "error";
+    private final static String ACCESS_TOKEN = "access_token";
+    private final static String REFRESH_TOKEN = "refresh_token";
     private final UserService userService;
-    private final static String tokenStarter = "Bearer ";
     private final Environment env;
-    private final static int tokenTime = 10 * 60 * 1000;
+
 
     public void getRefreshToken(HttpServletRequest request, HttpServletResponse response) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
 
         String secret = env.getProperty("key.secret");
 
-        if (authorizationHeader != null && authorizationHeader.startsWith(tokenStarter)) {
+        if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_STARTER)) {
             try {
-                String refresh_token = authorizationHeader.substring(tokenStarter.length());
+                String refresh_token = authorizationHeader.substring(TOKEN_STARTER.length());
                 Algorithm algorithm = Algorithm.HMAC256(secret.getBytes(StandardCharsets.UTF_8));
                 JWTVerifier verifier = JWT.require(algorithm).build();
                 DecodedJWT decodedJWT = verifier.verify(refresh_token);
@@ -52,28 +58,28 @@ public class TokenService {
                 try {
                     new ObjectMapper().writeValue(response.getOutputStream(), tokens);
                 } catch (Exception exception) {
-                    log.info("A problem has occurred!", exception);
+                    log.info(PROBLEM_MESSAGE, exception);
                 }
             } catch (Exception exception) {
-                response.setHeader("error", exception.getMessage());
+                response.setHeader(ERROR_MESSAGE, exception.getMessage());
                 response.setStatus(FORBIDDEN.value());
                 Map<String, String> error = getErrors(exception);
                 response.setContentType(APPLICATION_JSON_VALUE);
                 try {
                     new ObjectMapper().writeValue(response.getOutputStream(), error);
                 } catch (IOException ioException) {
-                    log.info("A problem has occurred!", ioException);
+                    log.info(PROBLEM_MESSAGE, ioException);
                 }
             }
         } else {
-            throw new RuntimeException("Refresh token is missing.");
+            throw new RuntimeException(MISSING_REFRESH_TOKEN_MESSAGE);
         }
     }
 
     public String generateAccessToken(UserCritic critic, HttpServletRequest request, Algorithm algorithm) {
         return JWT.create()
                 .withSubject(critic.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + tokenTime))
+                .withExpiresAt(new Date(System.currentTimeMillis() + TOKEN_TIME))
                 .withIssuer(request.getRequestURL().toString())
                 .withClaim("userRole", critic.getUserRole().toString())
                 .sign(algorithm);
@@ -81,15 +87,15 @@ public class TokenService {
 
     public Map<String, String> getTokens(String access_token, String refresh_token) {
         Map<String, String> tokens = new HashMap<>();
-        tokens.put("access_token", access_token);
-        tokens.put("refresh_token", refresh_token);
+        tokens.put(ACCESS_TOKEN, access_token);
+        tokens.put(REFRESH_TOKEN, refresh_token);
 
         return tokens;
     }
 
     public Map<String, String> getErrors(Exception exception) {
         Map<String, String> error = new HashMap<>();
-        error.put("error_message", exception.getMessage());
+        error.put(ERROR_MESSAGE, exception.getMessage());
 
         return error;
     }

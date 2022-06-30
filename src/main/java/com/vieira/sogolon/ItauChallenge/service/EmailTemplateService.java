@@ -25,7 +25,7 @@ public class EmailTemplateService {
                 "                  \n" +
                 "                    </td>\n" +
                 "                    <td style=\"font-size:28px;line-height:1.315789474;Margin-top:4px;padding-left:10px\">\n" +
-                "                      <span style=\"font-family:Helvetica,Arial,sans-serif;font-weight:700;color:#DFFF00;text-decoration:none;vertical-align:top;display:inline-block\">Confirme seu email!</span>\n" +
+                "                      <span style=\"font-family:Helvetica,Arial,sans-serif;font-weight:700;color:#DFFF00;text-decoration:none;vertical-align:top;display:inline-block\">Confirm your email!</span>\n" +
                 "                    </td>\n" +
                 "                  </tr>\n" +
                 "                </tbody></table>\n" +
@@ -63,7 +63,7 @@ public class EmailTemplateService {
                 "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
                 "      <td style=\"font-family:Helvetica,Arial,sans-serif;font-size:19px;line-height:1.315789474;max-width:560px\">\n" +
                 "        \n" +
-                "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#008080\">Olá " + name + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#008080\"> Obrigado(a) por se registrar. Por favor, ative sua conta clicando no link abaixo: </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#008080\"> <a style=\"color:#008000\" href=\"" + link + "\">Confirme agora.</a> </p></blockquote>\n  <p style=\"color:#008080\">Link expira em 10 minutos.</p> <p style=\"color:#008080\">Até logo!</p>" +
+                "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#008080\">Hi " + name + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#008080\"> Thank you for joining Critics System! To finish signing up, please confirm your email address. This ensures we have the right email in case we need to contact you. </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#008080\"> <a style=\"color:#008000\" href=\"" + link + "\">Confirm email address.</a> </p></blockquote>\n  <p style=\"color:#008080\">Link expires in 10 minutes.</p> <p style=\"color:#008080\">See you soon!</p>" +
                 "        \n" +
                 "      </td>\n" +
                 "      <td width=\"10\" valign=\"middle\"><br></td>\n" +

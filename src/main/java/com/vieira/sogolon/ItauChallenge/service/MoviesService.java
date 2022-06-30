@@ -3,7 +3,6 @@ package com.vieira.sogolon.ItauChallenge.service;
 import com.vieira.sogolon.ItauChallenge.dto.MoviesDTO;
 import com.vieira.sogolon.ItauChallenge.entities.Comment.Comment;
 import com.vieira.sogolon.ItauChallenge.entities.Comment.CommentResponse;
-import com.vieira.sogolon.ItauChallenge.entities.Comment.CommentTag;
 import com.vieira.sogolon.ItauChallenge.entities.Movies;
 import com.vieira.sogolon.ItauChallenge.repository.CommentsRepository;
 import com.vieira.sogolon.ItauChallenge.repository.MoviesRepository;
@@ -25,7 +24,6 @@ public class MoviesService {
     private final static Integer noReactions = 0;
     private final static List<Comment> noComments = new ArrayList<>();
     private final static List<CommentResponse> noResponses = new ArrayList<>();
-    private final static List<CommentTag> noTags = new ArrayList<>();
     private final static Boolean notRepeated = false;
 
     public Optional<Movies> checkInDatabase(String title) {

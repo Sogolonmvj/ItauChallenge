@@ -45,7 +45,7 @@ public class UserController {
 
     @GetMapping(path="/user/{email}")
     public ResponseEntity<?> fetchCritic(
-            @PathVariable("email") String email) { // change email to id
+            @PathVariable("email") String email) {
         Optional<UserDTO> criticDTO = userService.getUserCritic(email);
 
         if (criticDTO.isEmpty()) {
@@ -62,7 +62,7 @@ public class UserController {
     @PatchMapping(path="/moderator/user/{email}")
     public ResponseEntity<?> becomeModerator(
             @PathVariable("email") String email,
-            @Validated @RequestBody String userRole) { // change email to id
+            @Validated @RequestBody String userRole) {
 
         try {
             JsonNode node = Json.parse(userRole);
@@ -71,7 +71,7 @@ public class UserController {
                 Optional<UserDTO> criticUpdated = userService.becomeModerator(email, UserRole.MODERATOR);
 
                 if (criticUpdated.isEmpty()) {
-                    return ResponseEntity.badRequest().build(); // change to try/catch
+                    return ResponseEntity.badRequest().build();
                 }
 
                 return ResponseEntity.ok(criticUpdated);
@@ -87,32 +87,36 @@ public class UserController {
     @PostMapping("/critic/rate")
     public ResponseEntity<?> rateMovie(
             @RequestParam(value = "id", defaultValue = "") Long id,
-            @RequestParam(value = "rating", defaultValue = "") Double rating) {
+            @RequestParam(value = "rating", defaultValue = "") Double rating, @RequestHeader(value = "Authorization") String token) {
         Movies movie = moviesService.rateMovie(id, rating);
+        userService.getPoint(token);
         return ResponseEntity.ok().body(movie);
     }
 
     @PostMapping("/critic/comment")
     public ResponseEntity<?> commentMovie(
             @RequestParam(value = "id", defaultValue = "") Long id,
-            @RequestBody Comment comment) {
+            @RequestBody Comment comment, @RequestHeader(value = "Authorization") String token) {
         Movies movie = moviesService.commentMovie(id, comment);
+        userService.getPoint(token);
         return ResponseEntity.ok().body(movie);
     }
 
     @PostMapping("/critic/comment/response")
     public ResponseEntity<?> commentResponse(
             @RequestParam(value = "id", defaultValue = "") Long id,
-            @RequestBody CommentResponse commentResponse) {
+            @RequestBody CommentResponse commentResponse, @RequestHeader(value = "Authorization") String token) {
         Comment comment = commentService.commentResponse(id, commentResponse);
+        userService.getPoint(token);
         return ResponseEntity.ok().body(comment);
     }
 
     @PostMapping("/critic/comment/tag")
     public ResponseEntity<?> tagComment(
             @RequestParam(value = "id", defaultValue = "") Long id,
-            @RequestBody CommentTag commentTag) {
+            @RequestBody CommentTag commentTag, @RequestHeader(value = "Authorization") String token) {
         CommentTag newComment = commentService.tagComment(id, commentTag);
+        userService.getPoint(token);
         return ResponseEntity.ok().body(newComment);
     }
 
