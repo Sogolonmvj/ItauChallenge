@@ -6,6 +6,7 @@ import com.vieira.sogolon.ItauChallenge.entities.Comment.CommentTag;
 import com.vieira.sogolon.ItauChallenge.repository.CommentResponseRepository;
 import com.vieira.sogolon.ItauChallenge.repository.CommentTagRepository;
 import com.vieira.sogolon.ItauChallenge.repository.CommentsRepository;
+import com.vieira.sogolon.ItauChallenge.repository.MoviesRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,11 +33,6 @@ public class CommentService {
         return commentResponse.orElse(null);
     }
 
-    public CommentTag findCommentTagInDatabase(Long id) {
-        Optional<CommentTag> commentTag = commentTagRepository.findById(id);
-        return commentTag.orElse(null);
-    }
-
     public void saveCommentResponse(CommentResponse commentResponse) {
         commentResponseRepository.save(commentResponse);
     }
@@ -61,16 +57,8 @@ public class CommentService {
         return comment;
     }
 
-    public void initiateCommentTag(CommentTag commentTag) {
-        commentTag.setLikes(noReactions);
-        commentTag.setDislikes(noReactions);
-        commentTag.setRepeated(notRepeated);
-    }
-
     public CommentTag tagComment(Long id, CommentTag commentTag) {
         Comment comment = findCommentInDatabase(id);
-
-        initiateCommentTag(commentTag);
 
         commentTag.setTaggedComment(comment);
 
@@ -99,16 +87,6 @@ public class CommentService {
         return commentResponse;
     }
 
-    public CommentTag likeCommentTag(Long id) {
-        CommentTag commentTag = findCommentTagInDatabase(id);
-
-        commentTag.setLikes(commentTag.getLikes() + 1);
-
-        commentTagRepository.save(commentTag);
-
-        return commentTag;
-    }
-
     public Comment dislikeComment(Long id) {
         Comment comment = findCommentInDatabase(id);
 
@@ -127,16 +105,6 @@ public class CommentService {
         commentResponseRepository.save(commentResponse);
 
         return commentResponse;
-    }
-
-    public CommentTag dislikeCommentTag(Long id) {
-        CommentTag commentTag = findCommentTagInDatabase(id);
-
-        commentTag.setDislikes(commentTag.getDislikes() + 1);
-
-        commentTagRepository.save(commentTag);
-
-        return commentTag;
     }
 
     public Comment deleteCommentResponse(Long commentId, Long commentResponseId) {
@@ -164,16 +132,6 @@ public class CommentService {
             commentResponse.get().setRepeated(repeated);
             commentResponseRepository.save(commentResponse.get());
             return commentResponse.get();
-        }
-        return null;
-    }
-
-    public CommentTag markCommentTagAsRepeated(Long repeatedCommentTagId) {
-        Optional<CommentTag> commentTag = commentTagRepository.findById(repeatedCommentTagId);
-        if (commentTag.isPresent()) {
-            commentTag.get().setRepeated(repeated);
-            commentTagRepository.save(commentTag.get());
-            return commentTag.get();
         }
         return null;
     }

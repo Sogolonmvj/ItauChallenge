@@ -33,7 +33,7 @@ public class EmailService implements EmailSender {
             helper.setFrom("noreply@criticsystem.com");
             mailSender.send(mimeMessage);
         } catch (MessagingException exception) {
-            LOGGER.error("Falha no envio do email!", exception); // change log4j
+            LOGGER.error("Falha no envio do email!", exception);
             throw new IllegalStateException("Falha no envio do email!");
         }
     }

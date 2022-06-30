@@ -3,6 +3,7 @@ package com.vieira.sogolon.ItauChallenge.entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.vieira.sogolon.ItauChallenge.entities.Comment.Comment;
+import com.vieira.sogolon.ItauChallenge.entities.Comment.CommentTag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,24 +39,5 @@ public class Movies {
 
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Comment> comments;
-
-    public Movies(String imdbID,
-                  String title,
-                  String year,
-                  String runtime,
-                  String genre,
-                  String imdbRating,
-                  String imdbVotes) {
-        this.imdbID = imdbID;
-        this.title = title;
-        this.year = year;
-        this.runtime = runtime;
-        this.genre = genre;
-        this.imdbRating = imdbRating;
-        this.imdbVotes = imdbVotes;
-        this.rating = 0.0;
-        this.votes = 0;
-        this.comments = new ArrayList<>();
-    }
 
 }

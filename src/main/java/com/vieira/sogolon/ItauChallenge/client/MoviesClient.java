@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface MoviesClient {
 
     @GetMapping
-    Movies getMovie(@RequestParam(value = "t") String title, @RequestParam(value = "apikey") String key, @RequestParam(value = "r") String type);
+    Movies getMovie(@RequestParam(value = "t") String title,
+                    @RequestParam(value = "apikey") String key,
+                    @RequestParam(value = "r") String type);
 
 }

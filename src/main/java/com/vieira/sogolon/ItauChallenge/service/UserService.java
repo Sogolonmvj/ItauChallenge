@@ -131,11 +131,6 @@ public class UserService implements UserDetailsService {
         return getUserDTO(critic);
     }
 
-//    public Optional<UserDTO> getUserByToken(UUID token) {
-//        Optional<UserCritic> critic = userRepository.findByToken(token);
-//
-//    }
-
     public Optional<UserDTO> becomeModerator(String email, UserRole userRole) {
         Optional<UserCritic> critic = userRepository.findByEmail(email);
 
