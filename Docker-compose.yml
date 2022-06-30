@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+
+  critics-system:
+    image: sogolonmvj/critics-system
+    container_name: critics-system
+    ports:
+      - "8080:8080"
+    restart: always
+    environment:
+      - spring.profiles.active=prod
+    links:
+      - critics-system-postgres
+    depends_on:
+      - critics-system-postgres
+
+  critics-system-postgres:
+    image: postgres:10.4
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./database-data:/data/db
+    environment:
+      - POSTGRES_DB=critics_registration
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=0wN3r
+
+  maildev:
+    image: maildev/maildev
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai
+      - MAILDEV_WEB_PORT=1080
+      - MAILDEV_SMTP_PORT=1025
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+    links:
+      - critics-system
+    depends_on:
+      - critics-system
