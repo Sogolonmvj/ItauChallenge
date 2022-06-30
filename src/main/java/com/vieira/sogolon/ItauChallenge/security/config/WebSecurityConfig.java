@@ -107,6 +107,18 @@ public class WebSecurityConfig {
                 .hasAnyAuthority("MODERATOR");
         http
                 .authorizeRequests()
+                .antMatchers(PATCH, "/api/moderator/user/**")
+                .hasAnyAuthority("MODERATOR");
+        http
+                .authorizeRequests()
+                .antMatchers(GET, "/api/user/**")
+                .hasAnyAuthority("MODERATOR");
+        http
+                .authorizeRequests()
+                .antMatchers(GET, "/api/users")
+                .hasAnyAuthority("MODERATOR");
+        http
+                .authorizeRequests()
                 .anyRequest()
                 .authenticated();
         http
