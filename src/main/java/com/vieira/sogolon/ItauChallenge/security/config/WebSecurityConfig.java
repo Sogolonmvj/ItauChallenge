@@ -1,7 +1,5 @@
 package com.vieira.sogolon.ItauChallenge.security.config;
 
-import com.vieira.sogolon.ItauChallenge.repository.UserRepository;
-import com.vieira.sogolon.ItauChallenge.security.filter.CustomAuthenticationFilter;
 import com.vieira.sogolon.ItauChallenge.security.filter.CustomAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +9,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -26,10 +23,6 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    private final UserRepository userRepository;
-    private final AuthenticationConfiguration authenticationConfiguration;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
@@ -37,8 +30,6 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(userRepository, authenticationManager(authenticationConfiguration));
-        customAuthenticationFilter.setFilterProcessesUrl("/api/login");
 
         http
                 .csrf().disable();
@@ -47,7 +38,7 @@ public class WebSecurityConfig {
                 .sessionCreationPolicy(STATELESS);
         http
                 .authorizeRequests()
-                .antMatchers("/api/login/**", "/api/token/refresh/**", "/registration/**")
+                .antMatchers( "/registration/**")
                 .permitAll();
         http
                 .authorizeRequests()
@@ -121,8 +112,6 @@ public class WebSecurityConfig {
                 .authorizeRequests()
                 .anyRequest()
                 .authenticated();
-        http
-                .addFilter(customAuthenticationFilter);
         http
                 .addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 

@@ -35,7 +35,7 @@ public class Movies {
     private Double rating;
     private Integer votes;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Comment> comments;
 
 }

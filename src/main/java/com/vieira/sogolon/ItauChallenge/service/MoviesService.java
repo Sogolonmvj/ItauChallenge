@@ -8,6 +8,7 @@ import com.vieira.sogolon.ItauChallenge.repository.CommentsRepository;
 import com.vieira.sogolon.ItauChallenge.repository.MoviesRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,12 +35,13 @@ public class MoviesService {
     }
 
     public MoviesDTO getValuesFromDatabase(Movies movieInDatabase) {
-
         return getMovieDTO(movieInDatabase);
     }
 
-    public MoviesDTO getMovieDTO(Movies movie) {
+    public MoviesDTO getMovieDTO(Movies movie)  {
+
         MoviesDTO moviesDTO = new MoviesDTO();
+        moviesDTO.setId(movie.getId());
         moviesDTO.setImdbID(movie.getImdbID());
         moviesDTO.setTitle(movie.getTitle());
         moviesDTO.setYear(movie.getYear());
@@ -123,7 +125,8 @@ public class MoviesService {
         commentsRepository.save(comment);
     }
 
-    public Movies deleteComment(Long commentId, Long movieId) {
+    @Transactional
+    public Movies deleteComment(Long movieId, Long commentId) {
         commentsRepository.deleteById(commentId);
         return moviesRepository.findById(movieId).orElse(null);
     }

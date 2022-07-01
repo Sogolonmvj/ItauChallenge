@@ -7,6 +7,7 @@ import com.vieira.sogolon.ItauChallenge.entities.Movies;
 import com.vieira.sogolon.ItauChallenge.service.MoviesService;
 import lombok.AllArgsConstructor;
 import org.springframework.core.env.Environment;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,24 +24,26 @@ public class MoviesController {
     private final MoviesClient moviesClient;
     private final MoviesService moviesService;
     private final Environment env;
-    private final static String type = "r=json";
+    private final static String TYPE = "r=json";
 
     @GetMapping
-    public List<Movies> getAllMovies() {
-        return moviesService.findAllMoviesInDatabase();
+    public ResponseEntity<List<Movies>> getAllMovies() {
+        return ResponseEntity.ok().body(moviesService.findAllMoviesInDatabase());
     }
 
     @GetMapping("/{title}")
-    public MoviesDTO getMovies(@PathVariable("title") String title) {
+    public ResponseEntity<MoviesDTO> getMovies(@PathVariable("title") String title) {
         Optional<Movies> movieInDatabase = moviesService.checkInDatabase(title);
 
         if (movieInDatabase.isPresent()) {
-            return moviesService.getValuesFromDatabase(movieInDatabase.get());
+            return ResponseEntity
+                    .ok()
+                    .body(moviesService.getValuesFromDatabase(movieInDatabase.get()));
         }
 
         String key = env.getProperty("api.key");
-        Movies response = moviesClient.getMovie(title, key, type);
-        return moviesService.getValuesFromExternalAPI(response);
+        Movies response = moviesClient.getMovie(title, key, TYPE);
+        return ResponseEntity.ok().body(moviesService.getValuesFromExternalAPI(response));
     }
 
 }

@@ -13,6 +13,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MoviesDTO {
 
+    private Long id;
     @JsonProperty(value = "Title")
     private String title;
     @JsonProperty(value = "Year")

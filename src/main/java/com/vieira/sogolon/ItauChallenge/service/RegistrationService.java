@@ -24,11 +24,17 @@ public class RegistrationService {
     private final Environment env;
     private final EmailTemplateService emailTemplateService;
 
+    private final static String TOKEN_ERROR_MESSAGE = "Token not found!";
+    private final static String INVALID_EMAIL_MESSAGE = "Invalid email!";
+    private final static String EMAIL_ALREADY_CONFIRMED_MESSAGE = "Email already confirmed!";
+    private final static String EXPIRED_TOKEN_MESSAGE = "Token expired!";
+    private final static String EMAIL_CONFIRMED_MESSAGE = "Email confirmed successfully!";
+
     public String register(RegistrationRequest request) {
         boolean isValidEmail = emailValidatorService.
                 test(request.getEmail());
         if (!isValidEmail) {
-            throw new IllegalStateException("Email inválido!");
+            throw new IllegalStateException(INVALID_EMAIL_MESSAGE);
         }
 
         String token = userService.signUpUser(
@@ -54,16 +60,16 @@ public class RegistrationService {
         ConfirmationToken confirmationToken = confirmationTokenService
                 .getToken(token)
                 .orElseThrow(() ->
-                        new IllegalStateException("Token não encontrado!"));
+                        new IllegalStateException(TOKEN_ERROR_MESSAGE));
 
         if (confirmationToken.getConfirmedAt() != null) {
-            throw new IllegalStateException("Email já confirmado!");
+            throw new IllegalStateException(EMAIL_ALREADY_CONFIRMED_MESSAGE);
         }
 
         LocalDateTime expiredAt = confirmationToken.getExpiresAt();
 
         if (expiredAt.isBefore(LocalDateTime.now())) {
-            throw new IllegalStateException("Token expirado!");
+            throw new IllegalStateException(EXPIRED_TOKEN_MESSAGE);
         }
 
         confirmationTokenService.setConfirmedAt(token);
@@ -71,7 +77,7 @@ public class RegistrationService {
                 confirmationToken.getUserCritic().getEmail()
         );
 
-        return "Email confirmado com sucesso!";
+        return EMAIL_CONFIRMED_MESSAGE;
     }
 
     private String buildEmail(String name, String link) {

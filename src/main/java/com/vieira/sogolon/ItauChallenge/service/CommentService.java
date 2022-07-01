@@ -8,6 +8,7 @@ import com.vieira.sogolon.ItauChallenge.repository.CommentTagRepository;
 import com.vieira.sogolon.ItauChallenge.repository.CommentsRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -106,11 +107,13 @@ public class CommentService {
         return commentResponse;
     }
 
+    @Transactional
     public Comment deleteCommentResponse(Long commentId, Long commentResponseId) {
         commentResponseRepository.deleteById(commentResponseId);
         return commentsRepository.findById(commentId).orElse(null);
     }
 
+    @Transactional
     public void deleteCommentTag(Long commentTagId) {
         commentTagRepository.deleteById(commentTagId);
     }

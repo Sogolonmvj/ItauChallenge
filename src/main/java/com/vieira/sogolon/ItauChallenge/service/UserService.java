@@ -186,15 +186,15 @@ public class UserService implements UserDetailsService {
     }
 
     public UserCritic checkPoints(UserCritic critic) {
-        if (critic.getPoints() == BASIC_POINTS) {
+        if (critic.getPoints() >= BASIC_POINTS && critic.getPoints() < ADVANCED_POINTS) {
             critic.setUserRole(UserRole.BASIC);
         }
 
-        if (critic.getPoints() == ADVANCED_POINTS) {
+        if (critic.getPoints() >= ADVANCED_POINTS && critic.getPoints() < MODERATOR_POINTS) {
             critic.setUserRole(UserRole.ADVANCED);
         }
 
-        if (critic.getPoints() == MODERATOR_POINTS) {
+        if (critic.getPoints() >= MODERATOR_POINTS) {
             critic.setUserRole(UserRole.MODERATOR);
         }
         return critic;

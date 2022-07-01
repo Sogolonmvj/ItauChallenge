@@ -1,6 +1,8 @@
 package com.vieira.sogolon.ItauChallenge.entities.Comment;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.vieira.sogolon.ItauChallenge.entities.Movies;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +16,9 @@ import java.util.List;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
+@Table(name = "comments")
 public class Comment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -23,7 +27,13 @@ public class Comment {
     private Integer likes;
     private Integer dislikes;
     private Boolean repeated;
-    @ManyToMany(fetch = FetchType.LAZY)
+
+    @JsonIgnore
+    @OneToOne
+    @JoinColumn(name = "movie_id")
+    private Movies movie;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<CommentResponse> responses;
 
     public Comment(String username, String text) {
@@ -32,4 +42,5 @@ public class Comment {
         this.repeated = false;
         this.responses = new ArrayList<>();
     }
+
 }
