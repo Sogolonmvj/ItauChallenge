@@ -41,6 +41,10 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     private final static int tokenTime = 10 * 60 * 1000;
     private final static int refreshTokenTime = 50 * 60 * 1000;
     private final static int attemptLimit = 3;
+    private final static String ACCESS_TOKEN = "access_token";
+    private final static String REFRESH_TOKEN = "refresh_token";
+    private final static String LIMIT_EXCEEDED = "Login attempt limit has exceeded!";
+
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -62,13 +66,13 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         String refresh_token = generateToken(user, request, refreshTokenTime)
                 .sign(algorithm);
         Map<String, String> tokens = new HashMap<>();
-        tokens.put("access_token", access_token);
-        tokens.put("refresh_token", refresh_token);
+        tokens.put(ACCESS_TOKEN, access_token);
+        tokens.put(REFRESH_TOKEN, refresh_token);
         response.setContentType(APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), tokens);
     }
 
-    @Override // to use cache
+    @Override
     @SneakyThrows
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failedAuthentication) {
         String username = request.getParameter("username");
@@ -81,8 +85,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 critic.get().setFailedAttempts(attemptsCounter);
                 userRepository.save(critic.get());
             } else {
-                // implement time to unblock account
-                throw new LimitExceededException("Login attempt limit has exceeded!");
+                throw new LimitExceededException(LIMIT_EXCEEDED);
             }
         }
         super.unsuccessfulAuthentication(request, response, failedAuthentication);

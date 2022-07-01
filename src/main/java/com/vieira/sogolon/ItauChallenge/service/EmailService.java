@@ -16,6 +16,10 @@ import javax.mail.internet.MimeMessage;
 @AllArgsConstructor
 public class EmailService implements EmailSender {
 
+    private final static String EMAIL_CONFIRMATION_MESSAGE = "Confirm your email!";
+    private final static String SENDER_EMAIL = "noreply@criticssystem.com";
+    private final static String EMAIL_FAILURE_MESSAGE = "Failure while sending email";
+
     private final static Logger LOGGER = LoggerFactory
             .getLogger(EmailService.class);
     private final JavaMailSender mailSender;
@@ -29,12 +33,12 @@ public class EmailService implements EmailSender {
                     new MimeMessageHelper(mimeMessage, "utf-8");
             helper.setText(email, true);
             helper.setTo(to);
-            helper.setSubject("Confirme seu email!");
-            helper.setFrom("noreply@criticsystem.com");
+            helper.setSubject(EMAIL_CONFIRMATION_MESSAGE);
+            helper.setFrom(SENDER_EMAIL);
             mailSender.send(mimeMessage);
         } catch (MessagingException exception) {
-            LOGGER.error("Falha no envio do email!", exception);
-            throw new IllegalStateException("Falha no envio do email!");
+            LOGGER.error(EMAIL_FAILURE_MESSAGE, exception);
+            throw new IllegalStateException(EMAIL_FAILURE_MESSAGE);
         }
     }
 }

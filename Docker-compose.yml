@@ -15,6 +15,19 @@ services:
     depends_on:
       - critics-system-postgres
 
+  critics-system-authenticator:
+    image: sogolonmvj/critics-system-authenticator
+    container_name: critics-system-authenticator
+    ports:
+      - "8081:8081"
+    restart: always
+    environment:
+      - spring.profiles.active=prod
+    links:
+      - critics-system-postgres
+    depends_on:
+      - critics-system-postgres
+
   critics-system-postgres:
     image: postgres:10.4
     restart: always

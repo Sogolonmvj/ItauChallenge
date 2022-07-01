@@ -6,7 +6,6 @@ import com.vieira.sogolon.ItauChallenge.entities.Comment.CommentTag;
 import com.vieira.sogolon.ItauChallenge.repository.CommentResponseRepository;
 import com.vieira.sogolon.ItauChallenge.repository.CommentTagRepository;
 import com.vieira.sogolon.ItauChallenge.repository.CommentsRepository;
-import com.vieira.sogolon.ItauChallenge.repository.MoviesRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

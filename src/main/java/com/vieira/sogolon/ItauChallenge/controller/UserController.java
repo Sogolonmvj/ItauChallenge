@@ -7,6 +7,7 @@ import com.vieira.sogolon.ItauChallenge.entities.Comment.Comment;
 import com.vieira.sogolon.ItauChallenge.entities.Comment.CommentResponse;
 import com.vieira.sogolon.ItauChallenge.entities.Comment.CommentTag;
 import com.vieira.sogolon.ItauChallenge.entities.Movies;
+import com.vieira.sogolon.ItauChallenge.entities.UserCritic;
 import com.vieira.sogolon.ItauChallenge.enums.UserRole;
 import com.vieira.sogolon.ItauChallenge.parser.Json;
 import com.vieira.sogolon.ItauChallenge.service.CommentService;
@@ -97,6 +98,8 @@ public class UserController {
     public ResponseEntity<?> commentMovie(
             @RequestParam(value = "id", defaultValue = "") Long id,
             @RequestBody Comment comment, @RequestHeader(value = "Authorization") String token) {
+        UserCritic critic = userService.getUserByToken(token);
+        comment.setUsername(critic.getUsername());
         Movies movie = moviesService.commentMovie(id, comment);
         userService.getPoint(token);
         return ResponseEntity.ok().body(movie);
@@ -106,6 +109,8 @@ public class UserController {
     public ResponseEntity<?> commentResponse(
             @RequestParam(value = "id", defaultValue = "") Long id,
             @RequestBody CommentResponse commentResponse, @RequestHeader(value = "Authorization") String token) {
+        UserCritic critic = userService.getUserByToken(token);
+        commentResponse.setUsername(critic.getUsername());
         Comment comment = commentService.commentResponse(id, commentResponse);
         userService.getPoint(token);
         return ResponseEntity.ok().body(comment);
@@ -115,6 +120,8 @@ public class UserController {
     public ResponseEntity<?> tagComment(
             @RequestParam(value = "id", defaultValue = "") Long id,
             @RequestBody CommentTag commentTag, @RequestHeader(value = "Authorization") String token) {
+        UserCritic critic = userService.getUserByToken(token);
+        commentTag.setUsername(critic.getUsername());
         CommentTag newComment = commentService.tagComment(id, commentTag);
         userService.getPoint(token);
         return ResponseEntity.ok().body(newComment);

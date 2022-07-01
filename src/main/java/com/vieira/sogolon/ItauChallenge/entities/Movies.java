@@ -3,13 +3,11 @@ package com.vieira.sogolon.ItauChallenge.entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.vieira.sogolon.ItauChallenge.entities.Comment.Comment;
-import com.vieira.sogolon.ItauChallenge.entities.Comment.CommentTag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
