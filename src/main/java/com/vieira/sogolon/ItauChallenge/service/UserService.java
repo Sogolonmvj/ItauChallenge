@@ -54,14 +54,12 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email)
             throws UsernameNotFoundException {
         Optional<UserCritic> critic = userRepository.findByEmail(email);
-
         if (critic.isPresent()) {
             log.info(USER_FOUND_MESSAGE, email);
             Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority(critic.get().getUserRole().toString()));
             return new User(critic.get().getUsername(), critic.get().getPassword(), authorities);
         }
-
         log.error(USER_NOT_FOUND_MESSAGE);
         throw new UsernameNotFoundException(USER_NOT_FOUND_MESSAGE);
     }
@@ -69,56 +67,56 @@ public class UserService implements UserDetailsService {
     public String signUpUser(UserCritic userCritic) {
         boolean userExists = userRepository.findByEmail(userCritic.getEmail())
                 .isPresent();
-        if (userExists) {
+        checkUser(userExists, userCritic);
+        userRepository.save(encodePassword(userCritic));
+        return generateFirstToken(userCritic);
+    }
 
-            if (!userCritic.getEnabled()) {
-
-                String newToken = UUID.randomUUID().toString();
-
-                String link = env.getProperty("address.token-url") + newToken;
-                emailSender.send(
-                        userCritic.getEmail(),
-                        buildEmail(userCritic.getFirstName(), link));
-
-                ConfirmationToken confirmationToken = new ConfirmationToken(
-                        newToken,
-                        LocalDateTime.now(),
-                        LocalDateTime.now().plusMinutes(10),
-                        userRepository.findByEmail(userCritic.getEmail()).get()
-                );
-
-                confirmationTokenService.saveConfirmationToken(
-                        confirmationToken
-                );
-
-                throw new IllegalStateException(NOT_ACTIVATED_MESSAGE);
-
-            }
-
-            throw new IllegalStateException(USER_REGISTERED_MESSAGE);
-
-        }
-
+    public UserCritic encodePassword(UserCritic critic) {
         String encodedPassword = bCryptPasswordEncoder.encode(
-                userCritic.getPassword()
+                critic.getPassword()
         );
+        critic.setPassword(encodedPassword);
+        return critic;
+    }
 
-        userCritic.setPassword(encodedPassword);
-
-        userRepository.save(userCritic);
-
+    public String generateFirstToken(UserCritic critic) {
         String token = UUID.randomUUID().toString();
-
         ConfirmationToken confirmationToken = new ConfirmationToken(
                 token,
                 LocalDateTime.now(),
                 LocalDateTime.now().plusMinutes(10),
-                userCritic
+                critic
         );
-
         confirmationTokenService.saveConfirmationToken(confirmationToken);
-
         return token;
+    }
+
+    public void checkUser(Boolean userExists, UserCritic critic) {
+        if (userExists) {
+            if (!critic.getEnabled()) {
+                generateToken(critic);
+                throw new IllegalStateException(NOT_ACTIVATED_MESSAGE);
+            }
+            throw new IllegalStateException(USER_REGISTERED_MESSAGE);
+        }
+    }
+
+    public void generateToken(UserCritic critic) {
+        String newToken = UUID.randomUUID().toString();
+        String link = env.getProperty("address.token-url") + newToken;
+        emailSender.send(
+                critic.getEmail(),
+                buildEmail(critic.getFirstName(), link));
+        ConfirmationToken confirmationToken = new ConfirmationToken(
+                newToken,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusMinutes(10),
+                userRepository.findByEmail(critic.getEmail()).get()
+        );
+        confirmationTokenService.saveConfirmationToken(
+                confirmationToken
+        );
     }
 
     public int enableUser(String email) {
@@ -127,23 +125,17 @@ public class UserService implements UserDetailsService {
 
     public List<UserDTO> getAllCritics() {
         List<UserCritic> critics = userRepository.findAll();
-
         List<UserDTO> criticDTOS = new ArrayList<>();
-
         for (UserCritic critic: critics) {
-
             UserDTO criticDTO = new UserDTO();
-
             if (critic.getEnabled()) {
                 criticDTO.setId(critic.getId());
                 criticDTO.setFirstName(critic.getFirstName());
                 criticDTO.setLastName(critic.getLastName());
                 criticDTO.setEmail(critic.getEmail());
                 criticDTO.setUserRole(critic.getUserRole());
-
                 criticDTOS.add(criticDTO);
             }
-
         }
         return criticDTOS;
     }
